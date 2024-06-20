@@ -6,7 +6,7 @@ FONT = ("Courier", 18, "normal")
 screen = Screen()
 
 
-with open("highscore.txt", "r+") as highscore_file:
+with open("highscore.txt", "w+") as highscore_file:
     HIGHSCORE = highscore_file.read()
     print(HIGHSCORE)
     if HIGHSCORE == "":
@@ -36,12 +36,12 @@ class Score(Turtle):
         self.write(f"Score: {self.score} High Score: {self.highscore}", move=False, align=ALIGNMENT, font=FONT)
         self.score += 1
 
-    # def game_over(self):
-    #     # self.clear()
-    #     # screen.clear()
-    #     # screen.bgcolor('black')
-    #     self.goto(-70, 0)
-    #     self.write(f"Game Over!", move=False, align=ALIGNMENT, font=FONT)
+    def game_over(self):
+            self.clear()
+            screen.clear()
+            screen.bgcolor('black')
+            self.goto(-70, 0)
+            self.write(f"Game Over!", move=False, align=ALIGNMENT, font=FONT)
 
     def reset(self):
         if self.score > int(self.highscore):

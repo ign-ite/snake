@@ -1,52 +1,64 @@
-from turtle import Turtle, Screen
+from turtle import Turtle
 
 
-ALIGNMENT = "left"
-FONT = ("Courier", 18, "normal")
-screen = Screen()
+STARTING_POSITIONS = [(0, 0), (-20, 0), (-40, 0)]
+MOVE_DISTANCE = 20
+UP = 90
+DOWN = 270
+LEFT = 180
+RIGHT = 0
 
 
-with open("highscore.txt", "r+") as highscore_file:
-    HIGHSCORE = highscore_file.read()
-    print(HIGHSCORE)
-    if HIGHSCORE == "":
-        HIGHSCORE = "0"
-    else:
-        HIGHSCORE = HIGHSCORE
-
-
-class Score(Turtle):
+class Snake:
     def __init__(self):
-        super().__init__()
-        self.highscore = HIGHSCORE
-        self.clear()
-        self.hideturtle()
-        self.score = 0
-        self.goto(-60, 270)
-        self.color('white')
-        self.write(f"Score: {self.score}", move=False, align=ALIGNMENT, font=FONT)
-        self.penup()
+        self.segments = []
+        self.create_snake()
+        self.head = self.segments[0]
+        self.tail = self.segments[-1]
 
-    def high_score_update(self):
-        with open("highscore.txt", "w+") as highscore_file:
-            highscore_file.write(self.highscore)
-
-    def score_update(self):
-        self.clear()
-        self.write(f"Score: {self.score} High Score: {self.highscore}", move=False, align=ALIGNMENT, font=FONT)
-        self.score += 1
-
-    # def game_over(self):
-    #     # self.clear()
-    #     # screen.clear()
-    #     # screen.bgcolor('black')
-    #     self.goto(-70, 0)
-    #     self.write(f"Game Over!", move=False, align=ALIGNMENT, font=FONT)
+    def create_snake(self):
+        for position in STARTING_POSITIONS:
+            segment = Turtle(shape='square')
+            segment.color("white")
+            segment.penup()
+            segment.goto(position)
+            self.segments.append(segment)
 
     def reset(self):
-        if self.score > int(self.highscore):
-            self.highscore = str(self.score)
-            print(self.highscore)
-        self.score = 0
-        self.score_update()
-        self.high_score_update()
+        for segment in self.segments:
+            segment.goto(1000, 1000)
+        self.segments.clear()
+        self.create_snake()
+        self.head = self.segments[0]
+
+    def move(self):
+        for seg in range(len(self.segments) - 1, 0, -1):
+            xcor = self.segments[seg - 1].xcor()
+            ycor = self.segments[seg - 1].ycor()
+            self.segments[seg].goto(xcor, ycor)
+        self.head.forward(MOVE_DISTANCE)
+
+    def go_up(self):
+        if self.head.heading() != DOWN:
+            self.head.setheading(90)
+
+    def go_down(self):
+        if self.head.heading() != UP:
+            self.head.setheading(270)
+
+    def go_left(self):
+        if self.head.heading() != RIGHT:
+            self.head.setheading(180)
+
+    def go_right(self):
+        if self.head.heading() != LEFT:
+            self.head.setheading(0)
+
+    def update_snake(self):
+        new_segment = Turtle(shape='square')
+        new_segment.color("white")
+        new_segment.penup()
+        self.segments.append(new_segment)
+        # new_segment.goto((self.tail.xcor(), self.tail.ycor()))
+        self.move()
+
